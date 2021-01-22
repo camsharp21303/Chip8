@@ -4,7 +4,6 @@
 #include "Chip8.h"
 using namespace std;
 
-#define GAMEPATH "/home/cameron/PONG"
 
 int scale = 10;					//Scale of the game window
 int WINDOW_WIDTH = 64*scale;	//game window scale
@@ -16,7 +15,12 @@ int main (int argc, char* args[] )
 	GfxProc gfx(WINDOW_WIDTH, WINDOW_HEIGHT, scale); //create game window
 	bool quit = false;
 	Chip8* cpu = new Chip8();
-	cpu->Load(GAMEPATH);	//load game into chip 8 cpu
+
+	if(argc < 2){
+		cout << "No Rom specified" << endl;
+		return 1;
+	}
+	cpu->Load(args[1]);	//load game into chip 8 cpu
 
 	//start execution loop, check if user wants to quit
 	while(!quit){
