@@ -1,0 +1,5 @@
+chip8
+emulator
+build/
+out.txt
+.vscode
