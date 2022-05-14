@@ -30,8 +30,10 @@ int main(int argc, char** argv){
     while(!quit){
         cpu.cycle();
 
-        //draw our pixels
-        chip8_display(engine, cpu.display);
+        if(cpu.display_check()){
+            //draw our pixels
+            chip8_display(engine, cpu.display);
+        }
 
         //update the surface
         engine_UpdateSurface(engine);

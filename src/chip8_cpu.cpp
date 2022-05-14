@@ -63,6 +63,7 @@ void chip8_cpu::cycle(){
                         display[i][j] = 0;
                       }
                     }
+                    update_disp = true;
                     break;
             }
             break;
@@ -184,13 +185,61 @@ void chip8_cpu::cycle(){
                if(temp == 1 && display[x_coor + j][y_coor + i] == 0) V_reg[0xF] = 0;
             }
           }
-        }
+          update_disp = true;
+        }   
+        break;
 
         case 0xE000: //TODO keyboard input
+            break;
 
         case 0xF000: //TODO memory stoof
+            switch(opcode & 0x00FF){
+                case 0x0007: //0xFX07, sets Vx to value of delay timer
+                    V_reg[(opcode & 0x0F00) >> 8] = timer_delay;
+                    break;
+                case 0x000A: //0xFX0A, waits for keypress and then stores it in VX
+                    break;
+                case 0x0015: //0xFX15, sets the delay timer to VX
+                    timer_delay = V_reg[(opcode & 0x0F00) >> 8];
+                    break;
+                case 0x0018: //0xFX18, sets sound timer to VX
+                    timer_sound = V_reg[(opcode & 0x0F00) >> 8];
+                    break;
+                case 0x001E: //0xFX1E, adds VX to I
+                    I += V_reg[(opcode & 0x0F00) >> 8];
+                    break;
+                case 0x0029: //0xFX29, sets I to the location of the sprite for the character VX
+                    I = V_reg[(opcode & 0x0F00) >> 8] * 5;
+                    break;
+                case 0x0033:{ //0xFX33, stores BCD of VX in I, I+1, I+2, in tens order
+                    unsigned char d = V_reg[(opcode & 0x0F00) >> 8];
+                    int hundreds = d/100;
+                    int tens = (d%100)/10;
+                    int ones = (d%100)%10;
+                    RAM[I] = hundreds;
+                    RAM[I+1] = tens;
+                    RAM[I+2] = ones;
+                    break;
+                }
+                case 0x0055: //0xFX55, stores from V0 to VX in memory starting at address I
+                    x = (opcode & 0x0F00) >> 8;
+                    for(int i = 0; i <= x; i++){
+                        RAM[I + i] = V_reg[i];
+                    }
+                    break;
+                case 0x0065: //0xFX65, stores values from memory to V_reg
+                    x = (opcode & 0x0F00) >> 8;
+                    for(int i = 0; i <= x; i++){
+                        V_reg[I + i] = RAM[i];
+                    }
+
+            }
             break;
     }
 
     PC += 2;
+}
+
+bool chip8_cpu::display_check(){
+    return update_disp;
 }
