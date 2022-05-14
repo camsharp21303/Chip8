@@ -2,7 +2,6 @@
 #include <fstream>
 #include <SDL2/SDL.h>
 #include <chip8_cpu.h>
-#include <defns.h>
 #include <SDL_engine.h>
 using namespace std;
 
@@ -24,11 +23,16 @@ int main(int argc, char** argv){
     graphics_SDL* engine = engine_Start("Chip 8 Emulator");
 
     //fill surface with white
-    SDL_FillRect(engine->surface, NULL, SDL_MapRGB(engine->surface->format, 0x00, 0xFF, 0xFF));
+    SDL_FillRect(engine->surface, NULL, SDL_MapRGB(engine->surface->format, 0x00, 0x00, 0x00));
 
 
     bool quit = false;
     while(!quit){
+        cpu.cycle();
+
+        //draw our pixels
+        chip8_display(engine, cpu.display);
+
         //update the surface
         engine_UpdateSurface(engine);
 

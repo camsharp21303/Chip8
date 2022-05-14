@@ -1,4 +1,5 @@
-#pragma once
+#ifndef SDL_ENGINE_H
+#define SDL_ENGINE_H
 
 #include <iostream>
 #include <SDL2/SDL.h>
@@ -10,5 +11,9 @@ namespace std{
 
     void engine_UpdateSurface(graphics_SDL* engine);
 
+    void chip8_display(graphics_SDL* engine, const unsigned char display_bits[64][32]);
+
     bool is_quit();
 }
+
+#endif

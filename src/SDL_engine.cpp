@@ -47,3 +47,28 @@ bool std::is_quit(){
 
     return false;
 }
+
+void std::chip8_display(graphics_SDL* engine, const unsigned char display_bits[64][32]){
+  for(int i = 0; i < 64; i++){
+    for(int j = 0; j < 32; j++){
+        SDL_Rect rectangle;
+        rectangle.x = i * MULTIPLIER(WINDOW_WIDTH, 64);
+        rectangle.y = j * MULTIPLIER(WINDOW_HEIGHT, 32);
+        rectangle.w = MULTIPLIER(WINDOW_WIDTH, 64);
+        rectangle.h = MULTIPLIER(WINDOW_HEIGHT, 32);
+        unsigned int color;
+        if(display_bits[i][j] == 0){
+          color = SDL_MapRGB(engine->surface->format, 0, 0, 0);
+        }
+        else{
+          color = SDL_MapRGB(
+            engine->surface->format,
+            PIXEL_FUNC(PIXEL_COLOR, 0xFF0000, 16),
+            PIXEL_FUNC(PIXEL_COLOR, 0x00FF00, 8),
+            PIXEL_FUNC(PIXEL_COLOR, 0x0000FF, 0)
+          );
+        }
+        SDL_FillRect(engine->surface, &rectangle, color);
+      }
+    }
+}

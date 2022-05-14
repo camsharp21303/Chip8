@@ -24,7 +24,7 @@ chip8_cpu::chip8_cpu(ifstream& rom_file){
     update_disp = false;
 
     //copy fontset into memory
-    memcpy(RAM, fontset, 80);
+    memcpy(RAM, emu_fontset, 80);
 
 
     //find size of our rom
@@ -58,7 +58,11 @@ void chip8_cpu::cycle(){
                     PC = stack[sp];
                     break;
                 case 0x0000: //clearDisplay
-                    //TODO clear Display
+                    for(int i = 0; i < 64; i++){
+                      for(int j = 0; j < 32; j++){
+                        display[i][j] = 0;
+                      }
+                    }
                     break;
             }
             break;
@@ -158,9 +162,31 @@ void chip8_cpu::cycle(){
             V_reg[(opcode & 0x0F00) >> 8] = (rand() & 255) & (opcode & 0x00FF);
             break;
 
-        case 0xD000: //TODO display
+        case 0xD000:{ //0xDXYN
+          //draw a sprite at VX and VY
+          //has a width of 8 pixels and height of N pixels
+          //each row is read bitcoded string at I
+          int x_coor = V_reg[(opcode & 0x0F00) >> 8];
+          int y_coor = V_reg[(opcode & 0x00F0) >> 4];
 
-        case 0xE000: //TOD keyboard input
+          int N = opcode * 0x000F;
+
+          V_reg[0xF] = 0;
+
+          for(int i = 0; i < N; i++){
+            unsigned char bitcode = RAM[I + i];
+            for(int j = 0; j < 8; j++){
+               char bit = 0x8000 & bitcode;
+               bitcode <<= 1;
+
+               char temp = display[x_coor + j][y_coor + i];
+               display[x_coor + j][y_coor + i] ^= bit;
+               if(temp == 1 && display[x_coor + j][y_coor + i] == 0) V_reg[0xF] = 0;
+            }
+          }
+        }
+
+        case 0xE000: //TODO keyboard input
 
         case 0xF000: //TODO memory stoof
             break;

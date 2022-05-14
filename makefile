@@ -4,7 +4,7 @@ SRC_DIR=src
 INCLUDE_DIR=include
 OBJ_DIR=build
 
-CFLAGS=-g -Wall -I$(INCLUDE_DIR)/ $$(pkg-config sdl2 --cflags) 
+CFLAGS=-g -Wall -I $(INCLUDE_DIR) $$(pkg-config sdl2 --cflags) 
 
 SRCS=$(wildcard $(SRC_DIR)/*.cpp)
 OBJS=$(patsubst $(SRC_DIR)/%.cpp, $(OBJ_DIR)/%.o,$(SRCS))
